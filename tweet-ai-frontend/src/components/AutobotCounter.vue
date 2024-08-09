@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
-import socket from '../socket';
+import { io } from 'socket.io-client';
 import axios from 'axios';
 
 export default defineComponent({
@@ -24,26 +24,23 @@ export default defineComponent({
   setup() {
     const autobotCount = ref<number>(0);
 
-    // Fetch initial count from the API
     const fetchInitialCount = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/autobots');
-        autobotCount.value = response.data.length;
+        const response = await axios.get('http://localhost:3000/api/autobots/count');
+        autobotCount.value = response.data.count; 
       } catch (error) {
         console.error('Error fetching initial Autobot count:', error);
       }
     };
 
     onMounted(() => {
-      // Fetch initial count
       fetchInitialCount();
 
-      // Listen for WebSocket updates
-      socket.on('autobots:update', (autobots: any[]) => {
-        autobotCount.value = autobots.length;
+      const socket = io('http://localhost:3000');
+      socket.on('autobots:update', (count: number) => {
+        autobotCount.value = count;
       });
 
-      // Request initial update via WebSocket (optional but good for ensuring connection)
       socket.emit('autobots:requestUpdate');
     });
 
@@ -69,7 +66,7 @@ export default defineComponent({
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   text-align: center;
-  min-width: 300px; 
+  min-width: 300px;
 }
 
 /* Title styles */
