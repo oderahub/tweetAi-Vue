@@ -69,7 +69,7 @@ export default defineComponent({
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   text-align: center;
-  min-width: 300px; /* Ensure the card has a consistent width */
+  min-width: 300px; 
 }
 
 /* Title styles */
